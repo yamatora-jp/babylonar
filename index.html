@@ -71,19 +71,27 @@
 
   <script>
 
-	navigator.mediaDevices.getUserMedia({
-	  video: { facingMode: "environment" }
-	})
 
     // カメラ映像を取得
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
-        const video = document.getElementById("video");
-        video.srcObject = stream;
-      })
-      .catch(error => {
-        console.error("カメラの取得に失敗しました:", error);
-      });
+//    navigator.mediaDevices.getUserMedia({ video: true })
+//      .then(stream => {
+//        const video = document.getElementById("video");
+//        video.srcObject = stream;
+//      })
+//      .catch(error => {
+//        console.error("カメラの取得に失敗しました:", error);
+//      });
+
+	navigator.mediaDevices.getUserMedia({
+	  video: { facingMode: { ideal: "environment" } }
+	})
+	.then(stream => {
+	  const video = document.getElementById("video");
+	  video.srcObject = stream;
+	})
+	.catch(error => {
+	  console.error("カメラの取得に失敗しました:", error);
+	});
 
     // URLパラメータからPLYファイル名を取得（例: ?model=myModel.ply）
     const urlParams = new URLSearchParams(window.location.search);
