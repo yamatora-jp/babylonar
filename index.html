@@ -100,58 +100,57 @@
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
 
-//    const createScene = () => {
-//      const scene = new BABYLON.Scene(engine);
-//      scene.clearColor = new BABYLON.Color4(0, 0, 0, 0); // 背景透明化
+//  const createScene = () => {
+//    const scene = new BABYLON.Scene(engine);
+//    scene.clearColor = new BABYLON.Color4(0, 0, 0, 0); // 背景透明化
 //
-//      const camera = new BABYLON.ArcRotateCamera(
-//        "camera",
-//        Math.PI / 4,
-//        Math.PI / 3,
-//        10,
-//        BABYLON.Vector3.Zero(),
-//        scene
-//      );
-//      camera.attachControl(canvas, true);
-//      camera.wheelPrecision = 10;
-//      camera.inertia = 0.5;
-//      camera.lowerRadiusLimit = 2;
-//      camera.upperRadiusLimit = 50;
+//    const camera = new BABYLON.ArcRotateCamera(
+//      "camera",
+//      Math.PI / 4,
+//      Math.PI / 3,
+//      10,
+//      BABYLON.Vector3.Zero(),
+//      scene
+//    );
+//    camera.attachControl(canvas, true);
+//    camera.wheelPrecision = 10;
+//    camera.inertia = 0.5;
+//    camera.lowerRadiusLimit = 2;
+//    camera.upperRadiusLimit = 50;
 //
-//      const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
+//    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
 //
-//      // PLYファイル読み込み
-//      BABYLON.SceneLoader.Append("", `./${plyFileName}`, scene, function () {
-//        const mesh = scene.meshes[0];
-//        mesh.scaling = new BABYLON.Vector3(2, 2, 2);
-//        console.log("PLY file loaded successfully!");
-//      }, null, function (scene, message) {
-//        console.error("Failed to load PLY file:", message);
-//      });
+//    // PLYファイル読み込み
+//    BABYLON.SceneLoader.Append("", `./${plyFileName}`, scene, function () {
+//      const mesh = scene.meshes[0];
+//      mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+//      console.log("PLY file loaded successfully!");
+//    }, null, function (scene, message) {
+//      console.error("Failed to load PLY file:", message);
+//    });
 //
-//      return scene;
-//    };
+//    return scene;
+//  };
 
-var createScene = async function () {
-        
-    var scene = new BABYLON.Scene(engine);
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-    camera.setTarget(BABYLON.Vector3.Zero());
-    camera.attachControl(canvas, true);
-    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-    light.intensity = 0.7;
-    var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
-    sphere.position.y = 2;
-    sphere.position.z = 5;
-
-    const xr = await scene.createDefaultXRExperienceAsync({
-	uiOptions: {
-	    sessionMode: 'immersive-ar'
-	}
-    });
-
-    return scene;
-};
+	var createScene = async function () {
+	        
+	    var scene = new BABYLON.Scene(engine);
+	    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+	    camera.setTarget(BABYLON.Vector3.Zero());
+	    camera.attachControl(canvas, true);
+	    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+	    light.intensity = 0.7;
+	    var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+	    sphere.position.y = 2;
+	    sphere.position.z = 5;
+	
+	    const xr = await scene.createDefaultXRExperienceAsync({
+		uiOptions: {
+		    sessionMode: 'immersive-ar'
+		}
+	    });
+	    return scene;
+	};
 
 
 
