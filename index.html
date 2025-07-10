@@ -132,25 +132,30 @@
 //    return scene;
 //  };
 
-	var createScene = async function () {
-	        
-	    var scene = new BABYLON.Scene(engine);
-	    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-	    camera.setTarget(BABYLON.Vector3.Zero());
-	    camera.attachControl(canvas, true);
-	    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-	    light.intensity = 0.7;
-	    var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
-	    sphere.position.y = 2;
-	    sphere.position.z = 5;
-	
-	    const xr = await scene.createDefaultXRExperienceAsync({
-		uiOptions: {
-		    sessionMode: 'immersive-ar'
-		}
-	    });
-	    return scene;
-	};
+
+
+var createScene = async function () {
+    var scene = new BABYLON.Scene(engine);
+
+    // ライトだけは必要（ARでもライト影響する）
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 1;
+
+    // 球体を生成（とりあえず原点に置いておく）
+    var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 0.2, scene);
+
+    const xr = await scene.createDefaultXRExperienceAsync({
+        uiOptions: {
+            sessionMode: 'immersive-ar'
+        }
+    });
+
+    // カメラの前に球体を表示（1m前）
+    const xrCamera = xr.baseExperience.camera;
+    sphere.position = xrCamera.position.add(xrCamera.getForwardRay().direction.scale(1));
+
+    return scene;
+};
 
 
 
