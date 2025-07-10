@@ -134,28 +134,34 @@
 
 
 
-var createScene = async function () {
-    var scene = new BABYLON.Scene(engine);
+const createScene = async () => {
+      const scene = new BABYLON.Scene(engine);
 
-    // ライトだけは必要（ARでもライト影響する）
-    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-    light.intensity = 1;
+      // 確実に見えるように赤いマテリアル付きの球体を作成
+      const sphere = BABYLON.MeshBuilder.CreateSphere("sphere1", { diameter: 0.2 }, scene);
+      const mat = new BABYLON.StandardMaterial("mat", scene);
+      mat.diffuseColor = new BABYLON.Color3(1, 0, 0); // 赤
+      sphere.material = mat;
 
-    // 球体を生成（とりあえず原点に置いておく）
-    var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 0.2, scene);
+      const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+      light.intensity = 1;
 
-    const xr = await scene.createDefaultXRExperienceAsync({
+      const xr = await scene.createDefaultXRExperienceAsync({
         uiOptions: {
-            sessionMode: 'immersive-ar'
+          sessionMode: 'immersive-ar'
         }
-    });
+      });
 
-    // カメラの前に球体を表示（1m前）
-    const xrCamera = xr.baseExperience.camera;
-    sphere.position = xrCamera.position.add(xrCamera.getForwardRay().direction.scale(1));
+      // カメラの前方 0.5m に表示
+      const xrCamera = xr.baseExperience.camera;
+      scene.onBeforeRenderObservable.add(() => {
+        const direction = xrCamera.getForwardRay().direction;
+        const offset = direction.scale(0.5); // 50cm前
+        sphere.position = xrCamera.position.add(offset);
+      });
 
-    return scene;
-};
+      return scene;
+    };
 
 
 
