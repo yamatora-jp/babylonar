@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAMATORA 3D Model Viewer</title>
+
+    <script src="./libs/babylon/babylon.js"></script>
+    <script src="./libs/babylon/babylonjs.loaders.min.js"></script>
+
+    <style>
+
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background-color: #333;
+        color: white;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+      }
+      #header img {
+        height: 30px;
+        margin-right: 10px;
+      }
+      #header h1 {
+        font-size: 20px;
+        font-family: Arial, sans-serif;
+        margin: 0;
+      }
+
+        /* キャンバスを画面全体に設定 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #controls-container {
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        #controls-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        #controls-container input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div id="header">
+      <h1>YAMATORA 3D Model Viewer</h1>
+    </div>
+
+    <canvas id="renderCanvas" touch-action="none"></canvas>
+
+    <script>
+        // URLパラメータからPLYファイル名を取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const plyFileName = urlParams.get("model") || "italiachan.splat";
+
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new BABYLON.Engine(canvas, true);
+
+        const createScene = () => {
+            const scene = new BABYLON.Scene(engine);
+
+            // カメラ設定
+            const camera = new BABYLON.ArcRotateCamera(
+                "camera",
+                Math.PI / 2, Math.PI / 2, 10,
+                BABYLON.Vector3.Zero(),
+                scene
+            );
+            camera.attachControl(canvas, true);
+
+            // 環境光
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
+
+            // PLYファイルのロード
+            BABYLON.SceneLoader.Append("", `./${plyFileName}`, scene, function (scene) {
+                const mesh = scene.meshes[0];
+                mesh.scaling = new BABYLON.Vector3(2, 2, 2); // モデルのスケールを調整
+                console.log("PLY file loaded and scaled successfully!");
+            }, null, function (scene, message) {
+                console.error("Failed to load PLY file:", message);
+            });
+
+            return { scene, light, camera };
+        };
+
+        const { scene, light, camera } = createScene();
+
+        // ウィンドウサイズ変更時のリサイズ
+        window.addEventListener("resize", () => {
+            engine.resize();
+        });
+
+
+    </script>
+</body>
+</html>
