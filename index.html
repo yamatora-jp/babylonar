@@ -133,31 +133,40 @@
 //  };
 
 
-
-const createScene = async () => {
+    const createScene = async () => {
       const scene = new BABYLON.Scene(engine);
 
-      // 確実に見えるように赤いマテリアル付きの球体を作成
-      const sphere = BABYLON.MeshBuilder.CreateSphere("sphere1", { diameter: 0.2 }, scene);
-      const mat = new BABYLON.StandardMaterial("mat", scene);
-      mat.diffuseColor = new BABYLON.Color3(1, 0, 0); // 赤
-      sphere.material = mat;
-
+      // 光源
       const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-      light.intensity = 1;
 
+      // 球体とマテリアル
+      const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 0.2 }, scene);
+      const material = new BABYLON.StandardMaterial("mat", scene);
+      material.diffuseColor = new BABYLON.Color3(1, 0, 0); // 赤
+      sphere.material = material;
+      sphere.setEnabled(false); // 初期状態は非表示
+
+      // WebXR起動
       const xr = await scene.createDefaultXRExperienceAsync({
         uiOptions: {
           sessionMode: 'immersive-ar'
         }
       });
 
-      // カメラの前方 0.5m に表示
-      const xrCamera = xr.baseExperience.camera;
-      scene.onBeforeRenderObservable.add(() => {
-        const direction = xrCamera.getForwardRay().direction;
-        const offset = direction.scale(0.5); // 50cm前
-        sphere.position = xrCamera.position.add(offset);
+      // HitTest有効化
+      const fm = xr.baseExperience.featuresManager;
+      const hitTest = fm.enableFeature(BABYLON.WebXRHitTest.Name, 'latest');
+
+      let placed = false;
+
+      hitTest.onHitTestResultObservable.add((results) => {
+        if (results.length && !placed) {
+          const hit = results[0];
+          const pos = hit.transformationMatrix.getTranslation();
+          sphere.position.copyFrom(pos);
+          sphere.setEnabled(true); // 表示
+          placed = true; // 1回だけ配置
+        }
       });
 
       return scene;
