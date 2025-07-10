@@ -70,6 +70,11 @@
   <canvas id="renderCanvas" touch-action="none"></canvas>
 
   <script>
+
+	navigator.mediaDevices.getUserMedia({
+	  video: { facingMode: "environment" }
+	})
+
     // カメラ映像を取得
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
