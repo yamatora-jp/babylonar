@@ -174,12 +174,21 @@
 
 
 
-    const scene = createScene();
+//    const scene = createScene();
+//
+//    engine.runRenderLoop(() => {
+//      scene.render();
+//    });
 
-    engine.runRenderLoop(() => {
-      scene.render();
-    });
+(async () => {
+  const scene = await createScene();
 
+  engine.runRenderLoop(() => {
+    scene.render();
+  });
+})();
+
+	  
     window.addEventListener("resize", () => {
       engine.resize();
     });
